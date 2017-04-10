@@ -21,6 +21,171 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/wireframe_dark"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <ImageView
+                    android:id="@+id/iv_today"
+                    style="@style/ViewStyle"
+                    android:src="@drawable/d00" />
+
+                <ImageView
+                    android:id="@+id/iv_next_monday"
+                    style="@style/ViewStyle"
+                    android:src="@drawable/d00" />
+
+                <ImageView
+                    android:id="@+id/iv_next_tuesday"
+                    style="@style/ViewStyle"
+                    android:src="@drawable/d00" />
+
+                <ImageView
+                    android:id="@+id/iv_next_wednesday"
+                    style="@style/ViewStyle"
+                    android:src="@drawable/d00" />
+
+                <ImageView
+                    android:id="@+id/iv_next_thursday"
+                    style="@style/ViewStyle"
+                    android:src="@drawable/d00" />
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp" >
+
+                <TextView
+                    android:id="@+id/tv_today_temp"
+                    style="@style/TextViewStyle" />
+
+                <TextView
+                    android:id="@+id/tv_next_mondey_temp"
+                    style="@style/TextViewStyle" />
+
+                <TextView
+                    android:id="@+id/tv_next_tuesday_temp"
+                    style="@style/TextViewStyle" />
+
+                <TextView
+                    android:id="@+id/tv_next_wednesday_temp"
+                    style="@style/TextViewStyle" />
+
+                <TextView
+                    android:id="@+id/tv_next_thursday_temp"
+                    style="@style/TextViewStyle" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" >
+
+                <TextView
+                    android:id="@+id/tv_today"
+                    style="@style/TextViewStyle" />
+
+                <TextView
+                    android:id="@+id/tv_next_monday"
+                    style="@style/TextViewStyle" />
+
+                <TextView
+                    android:id="@+id/tv_next_tuesday"
+                    style="@style/TextViewStyle" />
+
+                <TextView
+                    android:id="@+id/tv_next_wednesday"
+                    style="@style/TextViewStyle" />
+
+                <TextView
+                    android:id="@+id/tv_next_thursday"
+                    style="@style/TextViewStyle" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/light_grey" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:id="@+id/tv_next_friday"
+                    style="@style/TextViewStyle"
+                    android:layout_weight="4"
+                    android:gravity="left"
+                    android:paddingLeft="16dp"
+                    android:text="@string/today" />
+
+                <ImageView
+                    android:id="@+id/iv_next_friday"
+                    style="@style/ViewStyle"
+                    android:layout_weight="4"
+                    android:src="@drawable/d00" />
+
+                <TextView
+                    android:id="@+id/tv_next_friday_temp"
+                    style="@style/TextViewStyle"
+                    android:layout_weight="4" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/light_grey" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:id="@+id/tv_next_saturday"
+                    style="@style/TextViewStyle"
+                    android:layout_weight="4"
+                    android:gravity="left"
+                    android:paddingLeft="16dp" />
+
+                <ImageView
+                    android:id="@+id/iv_next_saturday"
+                    style="@style/ViewStyle"
+                    android:layout_weight="4"
+                    android:src="@drawable/d00" />
+
+                <TextView
+                    android:id="@+id/tv_next_saturday_temp"
+                    style="@style/TextViewStyle"
+                    android:layout_weight="4" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/light_grey" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/light_grey" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

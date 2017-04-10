@@ -6,6 +6,8 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import cn.sharesdk.framework.ShareSDK;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -16,9 +17,14 @@ import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.app.zhaobaocheng.weatherforcast.util.HttpUtil;
 import com.bumptech.glide.Glide;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -47,8 +53,48 @@ public class SplashActivity extends AppCompatActivity{
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
         setContentView(R.layout.activity_splash);
+//        loadJuheData();
+        loadBingPic();  //每日刷新
         initView();
         animationSet();
+    }
+
+    //加载聚合数据
+    public void loadJuheData(){
+        String weatherUrl="http://v.juhe.cn/weather/index?format=2&cityname=苏州"+
+                "&key=c8f6950b1b4e5c10ff6a6e8fd6ed8f6a";
+        HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SplashActivity.this,"获取天气信息失败",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String responseText=response.body().string();
+                Log.d("聚合数据：",responseText);
+                try {
+                    JSONObject jsonObject=new JSONObject(responseText);
+                    Log.d("jsonObject.length()", String.valueOf(jsonObject.length()));
+                    JSONObject result=jsonObject.getJSONObject("result");
+
+                    JSONArray futureArray=result.getJSONArray("future");
+                    Log.d("future", String.valueOf(futureArray));
+
+                    JSONObject today=result.getJSONObject("today");
+                    Log.d("today", String.valueOf(today));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 

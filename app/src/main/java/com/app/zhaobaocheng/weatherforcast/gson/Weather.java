@@ -9,11 +9,16 @@ import java.util.List;
  */
 public class Weather {
     public String status;
-    public Basic basic;
+    public Basic basic;  //成功返回ok
     public AQI aqi;
     public Now now;
     public Suggestion suggestion;
+    public Today today;
+    public SK sk;
 
-    @SerializedName("daily_forecast")
-    public List<Forecast> forecastList;
+//    @SerializedName("daily_forecast")
+//    public List<Forecast> forecastList;
+
+    @SerializedName("future")
+    public List<Future> futureList;
 }

@@ -16,7 +16,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Now {
     @SerializedName("tmp")
-    public String temperature;
+    public String temperature;   //当天气温
 
     @SerializedName("cond")
     public More more;

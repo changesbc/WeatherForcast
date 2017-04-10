@@ -1,16 +1,21 @@
 package com.app.zhaobaocheng.weatherforcast.util;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.app.zhaobaocheng.weatherforcast.db.City;
 import com.app.zhaobaocheng.weatherforcast.db.County;
 import com.app.zhaobaocheng.weatherforcast.db.Province;
 import com.app.zhaobaocheng.weatherforcast.gson.Weather;
+import com.app.zhaobaocheng.weatherforcast.gson.WeatherBean;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by ZhaoBaocheng on 2017/3/21.
@@ -92,12 +97,35 @@ public class Utility {
     public static Weather handleWeatherResponse(String response){
         try {
             JSONObject jsonObject=new JSONObject(response);
-            JSONArray jsonArray=jsonObject.getJSONArray("HeWeather");
-            String weatherContent=jsonArray.getJSONObject(0).toString();
-            return new Gson().fromJson(weatherContent,Weather.class);
+//            Log.d("jsonObject.length()", String.valueOf(jsonObject.length()));
+            JSONObject result=jsonObject.getJSONObject("result");
+
+            JSONArray futureArray=result.getJSONArray("future");
+//            Log.d("future", String.valueOf(futureArray));
+
+            JSONObject today=result.getJSONObject("today");
+//            Log.d("today", String.valueOf(today));
+            return new Gson().fromJson(result.toString(),Weather.class);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+//        try {
+//            JSONObject jsonObject=new JSONObject(response);
+////            if(jsonObject.getString("resultcode")=="200" && jsonObject.getInt("error_code")==0){
+//////                JSONArray resultArray = jsonObject.getJSONArray("result");
+////                JSONObject json=jsonObject.getJSONObject("result");
+////                Log.d("json", String.valueOf(json));
+////            }
+//            JSONArray jsonArray=jsonObject.getJSONArray("HeWeather");
+//            String weatherContent=jsonArray.getJSONObject(0).toString();
+//            Log.d("HeWeather",weatherContent);
+////            return new Gson().fromJson(weatherContent,Weather.class);
+//            return new Gson().fromJson(response,Weather.class);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
         return null;
     }
 }
