@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.app.zhaobaocheng.weatherforcast.gson.Weather;
 import com.app.zhaobaocheng.weatherforcast.service.AutoUpdateService;
 import com.app.zhaobaocheng.weatherforcast.util.HttpUtil;
+import com.app.zhaobaocheng.weatherforcast.util.Utility;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
@@ -40,18 +41,11 @@ import okhttp3.Response;
 /**
  * Created by ZhaoBaocheng on 2017/3/22.
  */
-public class WeatherActivity extends AppCompatActivity{
+public class WeatherInfoActivity extends AppCompatActivity{
     private ScrollView weatherLayout;
     private TextView titleCity;
-//    private TextView titleUpdateTime;
     private TextView degreeText;
     private TextView weatherInfoText;
-    private LinearLayout forecastLayout;
-    private TextView aqiText;
-    private TextView pm25Text;
-    private TextView comfortText;
-    private TextView carWashText;
-    private TextView sportText;
     private ImageView bingPicImg;  //加载必应图片
     public SwipeRefreshLayout swipeRefresh; //自动刷新
     public DrawerLayout drawerLayout;  //实现滑动菜单
@@ -157,10 +151,8 @@ public class WeatherActivity extends AppCompatActivity{
 
         weatherLayout= (ScrollView) findViewById(R.id.weather_layout);
         titleCity= (TextView) findViewById(R.id.title_city);
-//        titleUpdateTime= (TextView) findViewById(R.id.title_update_time);
         degreeText= (TextView) findViewById(R.id.degree_text);
         weatherInfoText= (TextView) findViewById(R.id.weather_info_text);
-        forecastLayout= (LinearLayout) findViewById(R.id.forecast_layout);
 
         bingPicImg=(ImageView)findViewById(R.id.bing_pic_img);
         swipeRefresh=(SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
@@ -187,21 +179,26 @@ public class WeatherActivity extends AppCompatActivity{
         String weatherString=preferences.getString("weather",null);
         Log.d("weatherString",weatherString);
         if(weatherString!=null){
-
             //有缓存是直接解析天气数据
-
-            Weather weather = null;
+            final Weather weather;
             try {
                 JSONObject jsonObject=new JSONObject(weatherString);
                 JSONObject result=jsonObject.getJSONObject("result");
                 Gson gson=new Gson();
                 weather=gson.fromJson(result.toString(),Weather.class);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCityName= weather.today.cityName;
+                        //TODO
+                        showWeatherInfo(weather);
+                    }
+                });
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            mCityName=weather.today.cityName;
-            //TODO
-            showWeatherInfo(weather);
+
         }else{
             //无缓存是去服务器查询天气
             mCityName=getIntent().getStringExtra("cityName");
@@ -241,13 +238,13 @@ public class WeatherActivity extends AppCompatActivity{
             public void onResponse(Call call, Response response) throws IOException {
 
                 final String bingPic=response.body().string();
-                SharedPreferences.Editor editor=PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit();
+                SharedPreferences.Editor editor=PreferenceManager.getDefaultSharedPreferences(WeatherInfoActivity.this).edit();
                 editor.putString("bing_pic",bingPic);
                 editor.apply();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Glide.with(WeatherActivity.this).load(bingPic).into(bingPicImg);
+                        Glide.with(WeatherInfoActivity.this).load(bingPic).into(bingPicImg);
                     }
                 });
             }
@@ -258,8 +255,6 @@ public class WeatherActivity extends AppCompatActivity{
      * 根据天气id请求城市天气信息
      */
     public void requestWeather(final String cityName){
-//        http://v.juhe.cn/weather/index?format=2&cityname=%E8%8B%8F%E5%B7%9E&key=c8f6950b1b4e5c10ff6a6e8fd6ed8f6a
-
         String weatherUrl="http://v.juhe.cn/weather/index?format=2&cityname="+
                 cityName+ "&key=c8f6950b1b4e5c10ff6a6e8fd6ed8f6a";
 
@@ -270,7 +265,7 @@ public class WeatherActivity extends AppCompatActivity{
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(WeatherActivity.this,"获取天气信息失败",
+                        Toast.makeText(WeatherInfoActivity.this,"获取天气信息失败",
                                 Toast.LENGTH_SHORT).show();
                         swipeRefresh.setRefreshing(false);
                     }
@@ -293,14 +288,14 @@ public class WeatherActivity extends AppCompatActivity{
                         @Override
                         public void run() {
                             if(weather != null){
-                                SharedPreferences.Editor editor=PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit();
+                                SharedPreferences.Editor editor=PreferenceManager.getDefaultSharedPreferences(WeatherInfoActivity.this).edit();
                                 editor.putString("weather",responseText);
                                 editor.apply();
                                 mCityName=weather.today.cityName;
                                 //TODO 显示天气信息
                                 showWeatherInfo(weather);
                             }else{
-                                Toast.makeText(WeatherActivity.this,"获取天气信息失败",
+                                Toast.makeText(WeatherInfoActivity.this,"获取天气信息失败",
                                         Toast.LENGTH_SHORT).show();
                             }
                             swipeRefresh.setRefreshing(false);
@@ -312,6 +307,7 @@ public class WeatherActivity extends AppCompatActivity{
 
             }
         });
+
 
         loadBingPic();
     }
@@ -335,7 +331,28 @@ public class WeatherActivity extends AppCompatActivity{
             mWindStrength.setText(weather.sk.windStrength);
 
             //TODO 白天和黑夜
-            mNowWeather.setImageResource(getResources().getIdentifier("d" +
+
+            String[] timeArr=weather.sk.time.split(":");
+//            Log.d("time",timeArr[0]);
+            if(Integer.parseInt(timeArr[0])<=6 || Integer.parseInt(timeArr[0])>=18){
+                //黑夜
+                mNowWeather.setImageResource(getResources().getIdentifier("n" +
+                        weather.futureList.get(0).more.fa, "drawable", getPackageName()));
+                mNextMondayWeather.setImageResource(getResources().getIdentifier("n" +
+                        weather.futureList.get(1).more.fa, "drawable", getPackageName()));
+                mNextTuesdayWeather.setImageResource(getResources().getIdentifier("n" +
+                        weather.futureList.get(2).more.fa, "drawable", getPackageName()));
+                mNextWednesdayWeather.setImageResource(getResources().getIdentifier("n" +
+                        weather.futureList.get(3).more.fa, "drawable", getPackageName()));
+                mNextThursdayWeather.setImageResource(getResources().getIdentifier("n" +
+                        weather.futureList.get(4).more.fa, "drawable", getPackageName()));
+                mNextFridayWeather.setImageResource(getResources().getIdentifier("n" +
+                        weather.futureList.get(5).more.fa, "drawable", getPackageName()));
+                mNextSaturdayWeather.setImageResource(getResources().getIdentifier("n" +
+                        weather.futureList.get(6).more.fa, "drawable", getPackageName()));
+            }else  {
+                //白天
+                mNowWeather.setImageResource(getResources().getIdentifier("d" +
                         weather.futureList.get(0).more.fa, "drawable", getPackageName()));
                 mNextMondayWeather.setImageResource(getResources().getIdentifier("d" +
                         weather.futureList.get(1).more.fa, "drawable", getPackageName()));
@@ -350,6 +367,9 @@ public class WeatherActivity extends AppCompatActivity{
                 mNextSaturdayWeather.setImageResource(getResources().getIdentifier("d" +
                         weather.futureList.get(6).more.fa, "drawable", getPackageName()));
 
+            }
+
+            //温度
             mTodayTemp.setText(weather.futureList.get(0).temperature);
             mNextMondayTemp.setText(weather.futureList.get(1).temperature);
             mNextTuesdayTemp.setText(weather.futureList.get(2).temperature);
@@ -358,6 +378,7 @@ public class WeatherActivity extends AppCompatActivity{
             mNextFridayTemp.setText(weather.futureList.get(5).temperature);
             mNextSaturdayTemp.setText(weather.futureList.get(6).temperature);
 
+            //星期
             mToday.setText(weather.futureList.get(0).week);
             mNextMonday.setText(weather.futureList.get(1).week);
             mNextTuesday.setText(weather.futureList.get(2).week);
@@ -366,6 +387,7 @@ public class WeatherActivity extends AppCompatActivity{
             mNextFriday.setText(weather.futureList.get(5).week);
             mNextSaturday.setText(weather.futureList.get(6).week);
 
+            //详细信息
             mHumidityText.setText(weather.sk.humidity);  //湿度
             mWindText.setText(weather.today.wind);
             mDressingIndexText.setText(weather.today.dressingIndex);
@@ -379,7 +401,7 @@ public class WeatherActivity extends AppCompatActivity{
             Intent intent=new Intent(this, AutoUpdateService.class);
             startService(intent);
         }else{
-            Toast.makeText(WeatherActivity.this,"获取天气信息失败",Toast.LENGTH_SHORT).show();
+            Toast.makeText(WeatherInfoActivity.this,"获取天气信息失败",Toast.LENGTH_SHORT).show();
         }
     }
 

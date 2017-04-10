@@ -6,8 +6,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import cn.sharesdk.framework.ShareSDK;
-
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -17,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         //缓存数据的判断
         SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(this);
         if(preferences.getString("weather",null)!=null){
-            Intent intent=new Intent(this,WeatherActivity.class);
+            Intent intent=new Intent(this,WeatherInfoActivity.class);
             startActivity(intent);
             finish();
         }

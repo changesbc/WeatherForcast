@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.zhaobaocheng.weatherforcast.R;
 import com.app.zhaobaocheng.weatherforcast.db.City;
 import com.app.zhaobaocheng.weatherforcast.db.County;
 import com.app.zhaobaocheng.weatherforcast.db.Province;
@@ -36,10 +35,10 @@ import okhttp3.Response;
 /**
  * Created by ZhaoBaocheng on 2017/3/21.
  */
-public class ChooseAreaFragment extends Fragment{
-    public static final int LEVEL_PROVINCE=0;
-    public static final int LEVEL_CITY=1;
-    public static final int LEVEL_COUNTY=2;
+public class ChooseCityFragment extends Fragment{
+    public static final int LEVEL_PROVINCE=0;  //选择省
+    public static final int LEVEL_CITY=1;   //选择城市
+    public static final int LEVEL_COUNTY=2; //选择县
     private ProgressDialog progressDialog;
     private TextView titleText;
     private Button backButton;
@@ -98,15 +97,14 @@ public class ChooseAreaFragment extends Fragment{
                     //TODO  查询县
                     queryCounties();
                 }else if(currentLevel==LEVEL_COUNTY){
-//                    String weatherId=countyList.get(position).getWeatherId();
                     String cityName=countyList.get(position).getCountyName();
                     if(getActivity() instanceof MainActivity){
-                        Intent intent=new Intent(getActivity(),WeatherActivity.class);
+                        Intent intent=new Intent(getActivity(),WeatherInfoActivity.class);
                         intent.putExtra("cityName",cityName);
                         startActivity(intent);
                         getActivity().finish();
-                    }else if(getActivity() instanceof WeatherActivity){
-                        WeatherActivity activity=(WeatherActivity)getActivity();
+                    }else if(getActivity() instanceof WeatherInfoActivity){
+                        WeatherInfoActivity activity=(WeatherInfoActivity)getActivity();
                         activity.drawerLayout.closeDrawers();
                         activity.swipeRefresh.setRefreshing(true);
                         activity.requestWeather(cityName);

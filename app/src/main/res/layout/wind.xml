@@ -47,7 +47,6 @@
                     android:layout_gravity="center"
                     android:text="风力"
                     android:textColor="#fff"/>
-
             </LinearLayout>
 
         </RelativeLayout>
@@ -69,17 +68,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:textColor="#FF4CBF4E"
-                    android:textSize="40sp"
-                    />
+                    android:textSize="40sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="风向"
-                    android:textColor="#fff"
-                    />
-
+                    android:textColor="#fff" />
             </LinearLayout>
 
         </RelativeLayout>

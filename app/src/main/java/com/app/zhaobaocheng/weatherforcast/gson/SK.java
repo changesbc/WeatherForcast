@@ -5,9 +5,10 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by ZhaoBaocheng on 2017/4/9.
  */
-//当天气温
+//当前实况天气
 public class SK {
 
+    //温度
     @SerializedName("temp")
     public String temp;
 
@@ -19,4 +20,7 @@ public class SK {
 
     @SerializedName("wind_strength")
     public String windStrength;  //风力
+
+    @SerializedName("time")
+    public String time;  //更新的时间
 }

@@ -43,6 +43,7 @@ public class SplashActivity extends AppCompatActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(1);
+
         //必应闪屏图片
         if(Build.VERSION.SDK_INT>=21){
             View decorView=getWindow().getDecorView();
@@ -53,50 +54,10 @@ public class SplashActivity extends AppCompatActivity{
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
         setContentView(R.layout.activity_splash);
-//        loadJuheData();
         loadBingPic();  //每日刷新
         initView();
         animationSet();
     }
-
-    //加载聚合数据
-    public void loadJuheData(){
-        String weatherUrl="http://v.juhe.cn/weather/index?format=2&cityname=苏州"+
-                "&key=c8f6950b1b4e5c10ff6a6e8fd6ed8f6a";
-        HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(SplashActivity.this,"获取天气信息失败",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String responseText=response.body().string();
-                Log.d("聚合数据：",responseText);
-                try {
-                    JSONObject jsonObject=new JSONObject(responseText);
-                    Log.d("jsonObject.length()", String.valueOf(jsonObject.length()));
-                    JSONObject result=jsonObject.getJSONObject("result");
-
-                    JSONArray futureArray=result.getJSONArray("future");
-                    Log.d("future", String.valueOf(futureArray));
-
-                    JSONObject today=result.getJSONObject("today");
-                    Log.d("today", String.valueOf(today));
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
 
     /**
      * 数据初始化

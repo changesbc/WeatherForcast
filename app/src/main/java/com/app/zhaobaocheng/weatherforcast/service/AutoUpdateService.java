@@ -9,8 +9,11 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
+import com.app.zhaobaocheng.weatherforcast.WeatherInfoActivity;
 import com.app.zhaobaocheng.weatherforcast.gson.Weather;
 import com.app.zhaobaocheng.weatherforcast.util.HttpUtil;
+import com.app.zhaobaocheng.weatherforcast.util.Utility;
+import com.bumptech.glide.util.Util;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -54,8 +57,6 @@ public class AutoUpdateService extends Service {
         String weatherString=preferences.getString("weather",null);
         if(weatherString!=null){
             //有缓存时直接解析天气数据
-//            Weather weather= Utility.handleWeatherResponse(weatherString);
-//            Weather weather= Utility.handleWeatherResponse(weatherString);
             Weather weather = null;
             try {
                 JSONObject jsonObject=new JSONObject(weatherString);
@@ -65,13 +66,10 @@ public class AutoUpdateService extends Service {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-//            String weatherId=weather.basic.weatherId;
-            String weatherId=weather.today.cityName;
+            String cityName=weather.today.cityName;
 
-//            String weatherUrl="http://guolin.tech/api/weather?cityid="+
-//                    weatherId+"&key=6c10b738f9534d0cb3f9a04025b9c857";
             String weatherUrl="http://v.juhe.cn/weather/index?format=2&cityname="+
-                    weatherId+ "&key=c8f6950b1b4e5c10ff6a6e8fd6ed8f6a";
+                    cityName+ "&key=c8f6950b1b4e5c10ff6a6e8fd6ed8f6a";
             HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -81,8 +79,15 @@ public class AutoUpdateService extends Service {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     String responseText=response.body().string();
-//                    Weather weather=Utility.handleWeatherResponse(responseText);
-//                    Weather weather=Utility.handleWeatherResponse(responseText);
+//                    Weather weather = null;
+//                    try {
+//                        JSONObject jsonObject=new JSONObject(responseText);
+//                        JSONObject result=jsonObject.getJSONObject("result");
+//                        Gson gson=new Gson();
+//                        weather=gson.fromJson(result.toString(),Weather.class);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
                     Weather weather = null;
                     try {
                         JSONObject jsonObject=new JSONObject(responseText);
@@ -92,6 +97,7 @@ public class AutoUpdateService extends Service {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
                     if(weather !=null){
                         SharedPreferences.Editor editor=PreferenceManager.getDefaultSharedPreferences(AutoUpdateService.this).edit();
                         editor.putString("weather",responseText);

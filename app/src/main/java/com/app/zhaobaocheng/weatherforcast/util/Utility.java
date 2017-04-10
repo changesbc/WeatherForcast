@@ -73,7 +73,6 @@ public class Utility {
                     JSONObject countyObject=allCounties.getJSONObject(i);
                     County county=new County();
                     county.setCountyName(countyObject.getString("name"));
-                    county.setWeatherId(countyObject.getString("weather_id"));
                     county.setCityId(cityId);
                     county.save();
                 }
@@ -86,41 +85,18 @@ public class Utility {
         return false;
     }
 
-    /**
-     * 将返回的JSON数据解析成Weather实体类
-     */
-    public static Weather handleWeatherResponse(String response){
-        try {
-            JSONObject jsonObject=new JSONObject(response);
-//            Log.d("jsonObject.length()", String.valueOf(jsonObject.length()));
-            JSONObject result=jsonObject.getJSONObject("result");
-
-            JSONArray futureArray=result.getJSONArray("future");
-//            Log.d("future", String.valueOf(futureArray));
-
-            JSONObject today=result.getJSONObject("today");
-//            Log.d("today", String.valueOf(today));
-            return new Gson().fromJson(result.toString(),Weather.class);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+    public static Weather handleWeather(String response){
+        if(!TextUtils.isEmpty(response)){
+            try {
+                JSONObject jsonObject=new JSONObject(response);
+                JSONObject result=jsonObject.getJSONObject("result");
+                Gson gson=new Gson();
+                return gson.fromJson(result.toString(),Weather.class);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-
-//        try {
-//            JSONObject jsonObject=new JSONObject(response);
-////            if(jsonObject.getString("resultcode")=="200" && jsonObject.getInt("error_code")==0){
-//////                JSONArray resultArray = jsonObject.getJSONArray("result");
-////                JSONObject json=jsonObject.getJSONObject("result");
-////                Log.d("json", String.valueOf(json));
-////            }
-//            JSONArray jsonArray=jsonObject.getJSONArray("HeWeather");
-//            String weatherContent=jsonArray.getJSONObject(0).toString();
-//            Log.d("HeWeather",weatherContent);
-////            return new Gson().fromJson(weatherContent,Weather.class);
-//            return new Gson().fromJson(response,Weather.class);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
         return null;
     }
+
 }
