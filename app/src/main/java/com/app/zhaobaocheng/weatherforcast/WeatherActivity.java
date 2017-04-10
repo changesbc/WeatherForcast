@@ -1,20 +1,16 @@
 package com.app.zhaobaocheng.weatherforcast;
 
-import android.app.ActivityManager;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -24,23 +20,16 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.zhaobaocheng.weatherforcast.gson.Forecast;
-import com.app.zhaobaocheng.weatherforcast.gson.Future;
-import com.app.zhaobaocheng.weatherforcast.gson.FutureWeatherBean;
 import com.app.zhaobaocheng.weatherforcast.gson.Weather;
-import com.app.zhaobaocheng.weatherforcast.gson.WeatherBean;
 import com.app.zhaobaocheng.weatherforcast.service.AutoUpdateService;
 import com.app.zhaobaocheng.weatherforcast.util.HttpUtil;
-import com.app.zhaobaocheng.weatherforcast.util.Utility;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
-import java.util.List;
 
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
@@ -67,8 +56,7 @@ public class WeatherActivity extends AppCompatActivity{
     public SwipeRefreshLayout swipeRefresh; //自动刷新
     public DrawerLayout drawerLayout;  //实现滑动菜单
     private Button navButton;
-//    private String weatherId;
-    private String mWeatherId;
+    private String mCityName;
     private ImageButton btnShare;
 
     private ImageView mNowWeather;// 现在天气
@@ -174,9 +162,6 @@ public class WeatherActivity extends AppCompatActivity{
         weatherInfoText= (TextView) findViewById(R.id.weather_info_text);
         forecastLayout= (LinearLayout) findViewById(R.id.forecast_layout);
 
-//        comfortText= (TextView) findViewById(R.id.comfort_text);
-//        carWashText= (TextView) findViewById(R.id.car_wash_text);
-//        sportText= (TextView) findViewById(R.id.sport_text);
         bingPicImg=(ImageView)findViewById(R.id.bing_pic_img);
         swipeRefresh=(SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
@@ -200,14 +185,11 @@ public class WeatherActivity extends AppCompatActivity{
 
         SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(this);
         String weatherString=preferences.getString("weather",null);
-//        final String weatherId;
         Log.d("weatherString",weatherString);
         if(weatherString!=null){
 
             //有缓存是直接解析天气数据
-//            Weather weather= Utility.handleWeatherResponse(weatherString);
-//            mWeatherId=weather.basic.weatherId;
-//            mWeatherId=weather.today.cityName;
+
             Weather weather = null;
             try {
                 JSONObject jsonObject=new JSONObject(weatherString);
@@ -217,21 +199,21 @@ public class WeatherActivity extends AppCompatActivity{
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            mWeatherId=weather.today.cityName;
+            mCityName=weather.today.cityName;
             //TODO
             showWeatherInfo(weather);
         }else{
             //无缓存是去服务器查询天气
-            mWeatherId=getIntent().getStringExtra("cityName");
+            mCityName=getIntent().getStringExtra("cityName");
             weatherLayout.setVisibility(View.INVISIBLE);
             //TODO
-            requestWeather(mWeatherId);
+            requestWeather(mCityName);
         }
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
 
             @Override
             public void onRefresh() {
-                requestWeather(mWeatherId);
+                requestWeather(mCityName);
             }
         });
 
@@ -276,10 +258,8 @@ public class WeatherActivity extends AppCompatActivity{
      * 根据天气id请求城市天气信息
      */
     public void requestWeather(final String cityName){
-//        Log.d("weatherId",cityName);
 //        http://v.juhe.cn/weather/index?format=2&cityname=%E8%8B%8F%E5%B7%9E&key=c8f6950b1b4e5c10ff6a6e8fd6ed8f6a
-//        String weatherUrl="http://guolin.tech/api/weather?cityid="+
-//                weatherId+"&key=6c10b738f9534d0cb3f9a04025b9c857";
+
         String weatherUrl="http://v.juhe.cn/weather/index?format=2&cityname="+
                 cityName+ "&key=c8f6950b1b4e5c10ff6a6e8fd6ed8f6a";
 
@@ -302,10 +282,7 @@ public class WeatherActivity extends AppCompatActivity{
 
                 final String responseText=response.body().string();
 //                Log.d("聚合数据：",responseText);
-//                final Weather weather=Utility.handleWeatherResponse(responseText);
                 final Weather weather;
-//                Log.d("weather：", String.valueOf(weather));
-//                Log.d("weather", weather.today.weather);
                 try {
                     JSONObject jsonObject=new JSONObject(responseText);
                     JSONObject result=jsonObject.getJSONObject("result");
@@ -319,8 +296,7 @@ public class WeatherActivity extends AppCompatActivity{
                                 SharedPreferences.Editor editor=PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit();
                                 editor.putString("weather",responseText);
                                 editor.apply();
-//                                mWeatherId=weather.basic.weatherId;
-                                mWeatherId=weather.today.cityName;
+                                mCityName=weather.today.cityName;
                                 //TODO 显示天气信息
                                 showWeatherInfo(weather);
                             }else{
@@ -345,21 +321,12 @@ public class WeatherActivity extends AppCompatActivity{
      * @param weather
      */
     private void showWeatherInfo(Weather weather){
-        // && "ok".equals(weather.status)
-        Log.d("信息", String.valueOf(weather));
         if(weather !=null){   //为null
             String cityName=weather.today.cityName;
-            Log.d("cityName",cityName);
-//            String cityName=weather.today.cityName;
-//            String updateTime=weather.basic.update.updateTime.split(" ")[1];
-//            Log.d("时间：",updateTime);
-//            String degree=weather.now.temperature+"℃";
-//            String weatherInfo=weather.now.more.info;
-//            String degree=weather.today.temperature+"℃";
-            String degree=weather.sk.temp+"℃";
+
+            String degree=weather.sk.temp+"℃";  //温度
             String weatherInfo=weather.today.weather;
             titleCity.setText(cityName);
-//            titleUpdateTime.setText(updateTime);
             degreeText.setText(degree);
             weatherInfoText.setText(weatherInfo);
 
@@ -408,73 +375,6 @@ public class WeatherActivity extends AppCompatActivity{
             mTravelIndexText.setText(weather.today.travelIndex);
             mExerciseIndexText.setText(weather.today.exerciseIndex);
 
-//            for(Future future : weather.futureList){
-//                Log.d("集合：", future.week);
-//                mTodayTemp.setText(future.temperature);
-//                mNextMondayTemp.setText(future.temperature);
-//                mNextTuesdayTemp.setText(future.temperature);
-//                mNextWednesdayTemp.setText(future.temperature);
-//                mNextThursdayTemp.setText(future.temperature);
-//                mNextFridayTemp.setText(future.temperature);
-//                mNextSaturdayTemp.setText(future.temperature);
-//
-//                mToday.setText(future.week);
-//                mNextMonday.setText(future.week);
-//                mNextTuesday.setText(future.week);
-//                mNextWednesday.setText(future.week);
-//                mNextThursday.setText(future.week);
-//                mNextFriday.setText(future.week);
-//                mNextSaturday.setText(future.week);
-//
-////                mNowWeather.setImageResource(getResources().getIdentifier("d" +
-////                        future.more.fa, "drawable", "com.juhe.weather"));
-////                mNextMondayWeather.setImageResource(getResources().getIdentifier("d" +
-////                        future.more.fa, "drawable", "com.juhe.weather"));
-////                mNextTuesdayWeather.setImageResource(getResources().getIdentifier("d" +
-////                        future.more.fa, "drawable", "com.juhe.weather"));
-////                mNextWednesdayWeather.setImageResource(getResources().getIdentifier("d" +
-////                        future.more.fa, "drawable", "com.juhe.weather"));
-////                mNextThursdayWeather.setImageResource(getResources().getIdentifier("d" +
-////                        future.more.fa, "drawable", "com.juhe.weather"));
-////                mNextFridayWeather.setImageResource(getResources().getIdentifier("d" +
-////                        future.more.fa, "drawable", "com.juhe.weather"));
-////                mNextSaturdayWeather.setImageResource(getResources().getIdentifier("d" +
-////                        future.more.fa, "drawable", "com.juhe.weather"));
-//
-//
-//
-//            }
-            
-//            forecastLayout.removeAllViews();
-//            View view= LayoutInflater.from(this).inflate(R.layout.forecast_item,
-//                    forecastLayout,false);
-//
-//            forecastLayout.addView(view);
-//            for(Forecast forecast : weather.forecastList){
-//                View view= LayoutInflater.from(this).inflate(R.layout.forecast_item,
-//                        forecastLayout,false);
-//                TextView dateText= (TextView) view.findViewById(R.id.date_text);
-//                TextView infoText= (TextView) view.findViewById(R.id.info_text);
-//                TextView maxText= (TextView) view.findViewById(R.id.max_text);
-//                TextView minText= (TextView) view.findViewById(R.id.min_text);
-//                dateText.setText(forecast.date);
-//                infoText.setText(forecast.more.info);
-//                maxText.setText(forecast.temperature.max);
-//                minText.setText(forecast.temperature.min);
-//                forecastLayout.addView(view);
-//            }
-//            if(weather.aqi!=null){
-//                aqiText.setText(weather.aqi.city.aqi);
-//                pm25Text.setText(weather.aqi.city.pm25);
-//            }
-//            String comfort="舒适度："+weather.suggestion.comfort.info;
-//            String carWash="洗车指数："+weather.suggestion.carWash.info;
-//            String sport="运动建议："+weather.suggestion.sport.info;
-//            comfortText.setText(comfort);
-//            carWashText.setText(carWash);
-//            sportText.setText(sport);
-//            List<FutureWeatherBean> futureList = weather.getFutureList();
-//            Log.d("天气：", String.valueOf(futureList.size()));
             weatherLayout.setVisibility(View.VISIBLE);
             Intent intent=new Intent(this, AutoUpdateService.class);
             startService(intent);

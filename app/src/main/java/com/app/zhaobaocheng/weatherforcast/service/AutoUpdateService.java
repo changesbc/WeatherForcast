@@ -10,9 +10,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
 import com.app.zhaobaocheng.weatherforcast.gson.Weather;
-import com.app.zhaobaocheng.weatherforcast.gson.WeatherBean;
 import com.app.zhaobaocheng.weatherforcast.util.HttpUtil;
-import com.app.zhaobaocheng.weatherforcast.util.Utility;
 import com.google.gson.Gson;
 
 import org.json.JSONException;

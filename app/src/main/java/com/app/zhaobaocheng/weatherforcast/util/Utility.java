@@ -1,21 +1,16 @@
 package com.app.zhaobaocheng.weatherforcast.util;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.app.zhaobaocheng.weatherforcast.db.City;
 import com.app.zhaobaocheng.weatherforcast.db.County;
 import com.app.zhaobaocheng.weatherforcast.db.Province;
 import com.app.zhaobaocheng.weatherforcast.gson.Weather;
-import com.app.zhaobaocheng.weatherforcast.gson.WeatherBean;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by ZhaoBaocheng on 2017/3/21.
