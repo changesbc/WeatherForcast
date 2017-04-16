@@ -25,7 +25,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.thinkland.juheapi.openid"
-            android:value="c8f6950b1b4e5c10ff6a6e8fd6ed8f6a"/>
+            android:value="6f38d1227303bb7797e124b50cab5661"/>
 
         <activity android:name=".SplashActivity">
             <intent-filter>

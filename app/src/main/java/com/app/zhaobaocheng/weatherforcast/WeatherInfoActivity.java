@@ -20,6 +20,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.zhaobaocheng.weatherforcast.global.Global;
 import com.app.zhaobaocheng.weatherforcast.gson.Weather;
 import com.app.zhaobaocheng.weatherforcast.service.AutoUpdateService;
 import com.app.zhaobaocheng.weatherforcast.util.HttpUtil;
@@ -177,7 +178,6 @@ public class WeatherInfoActivity extends AppCompatActivity{
 
         SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(this);
         String weatherString=preferences.getString("weather",null);
-        Log.d("weatherString",weatherString);
         if(weatherString!=null){
             //有缓存是直接解析天气数据
             final Weather weather;
@@ -195,9 +195,11 @@ public class WeatherInfoActivity extends AppCompatActivity{
                         showWeatherInfo(weather);
                     }
                 });
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
 
         }else{
             //无缓存是去服务器查询天气
@@ -255,8 +257,7 @@ public class WeatherInfoActivity extends AppCompatActivity{
      * 根据天气id请求城市天气信息
      */
     public void requestWeather(final String cityName){
-        String weatherUrl="http://v.juhe.cn/weather/index?format=2&cityname="+
-                cityName+ "&key=c8f6950b1b4e5c10ff6a6e8fd6ed8f6a";
+        String weatherUrl= Global.URL+ cityName+Global.ApkKey;
 
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
@@ -301,6 +302,7 @@ public class WeatherInfoActivity extends AppCompatActivity{
                             swipeRefresh.setRefreshing(false);
                         }
                     });
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

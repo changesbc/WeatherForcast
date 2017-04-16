@@ -12,6 +12,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
 /**
  * Created by ZhaoBaocheng on 2017/3/21.
  */
@@ -73,6 +79,7 @@ public class Utility {
                     JSONObject countyObject=allCounties.getJSONObject(i);
                     County county=new County();
                     county.setCountyName(countyObject.getString("name"));
+                    county.setWeatherId(countyObject.getString("weather_id"));
                     county.setCityId(cityId);
                     county.save();
                 }
@@ -98,5 +105,4 @@ public class Utility {
         }
         return null;
     }
-
 }

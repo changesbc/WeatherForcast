@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
 import com.app.zhaobaocheng.weatherforcast.WeatherInfoActivity;
+import com.app.zhaobaocheng.weatherforcast.global.Global;
 import com.app.zhaobaocheng.weatherforcast.gson.Weather;
 import com.app.zhaobaocheng.weatherforcast.util.HttpUtil;
 import com.app.zhaobaocheng.weatherforcast.util.Utility;
@@ -68,8 +69,7 @@ public class AutoUpdateService extends Service {
             }
             String cityName=weather.today.cityName;
 
-            String weatherUrl="http://v.juhe.cn/weather/index?format=2&cityname="+
-                    cityName+ "&key=c8f6950b1b4e5c10ff6a6e8fd6ed8f6a";
+            String weatherUrl= Global.URL+ cityName+Global.ApkKey;
             HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -79,15 +79,7 @@ public class AutoUpdateService extends Service {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     String responseText=response.body().string();
-//                    Weather weather = null;
-//                    try {
-//                        JSONObject jsonObject=new JSONObject(responseText);
-//                        JSONObject result=jsonObject.getJSONObject("result");
-//                        Gson gson=new Gson();
-//                        weather=gson.fromJson(result.toString(),Weather.class);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
+
                     Weather weather = null;
                     try {
                         JSONObject jsonObject=new JSONObject(responseText);
@@ -98,11 +90,6 @@ public class AutoUpdateService extends Service {
                         e.printStackTrace();
                     }
 
-                    if(weather !=null){
-                        SharedPreferences.Editor editor=PreferenceManager.getDefaultSharedPreferences(AutoUpdateService.this).edit();
-                        editor.putString("weather",responseText);
-                        editor.apply();
-                    }
                     if(weather !=null){
                         SharedPreferences.Editor editor=PreferenceManager.getDefaultSharedPreferences(AutoUpdateService.this).edit();
                         editor.putString("weather",responseText);
